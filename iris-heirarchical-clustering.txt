@@ -1,0 +1,20 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+# Load the Iris dataset
+iris = load_iris()
+X, y = iris.data, iris.target
+
+# Apply hierarchical clustering algorithm
+linked = linkage(X, method='ward')
+
+# Plot the dendrogram
+plt.figure(figsize=(12, 8))
+dendrogram(linked, orientation='top', distance_sort='descending', show_leaf_counts=True)
+plt.title('Hierarchical Clustering Dendrogram for Iris Dataset')
+plt.xlabel('Sample Index')
+plt.ylabel('Distance')
+plt.show()

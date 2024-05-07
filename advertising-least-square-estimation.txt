@@ -1,0 +1,77 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# Load the dataset
+data = pd.read_csv('Advertising.csv')
+
+# Calculate correlation coefficients
+correlation_tv = data['TV'].corr(data['Sales'])
+correlation_radio = data['Radio'].corr(data['Sales'])
+correlation_newspaper = data['Newspaper'].corr(data['Sales'])
+
+print("Correlation between TV and Sales:", correlation_tv)
+print("Correlation between Radio and Sales:", correlation_radio)
+print("Correlation between Newspaper and Sales:", correlation_newspaper)
+
+# Linear regression and plotting for TV and Sales
+X_tv = data[['TV']].values
+y_tv = data['Sales'].values
+
+model_tv = LinearRegression()
+model_tv.fit(X_tv, y_tv)
+y_pred_tv = model_tv.predict(X_tv)
+
+plt.scatter(X_tv, y_tv, color='blue', label='Actual data')
+plt.plot(X_tv, y_pred_tv, color='red', label='Best Fit Line')
+plt.title('TV vs Sales')
+plt.xlabel('TV')
+plt.ylabel('Sales')
+plt.legend()
+plt.show()
+
+# Calculate error for TV and Sales
+mse_tv = mean_squared_error(y_tv, y_pred_tv)
+print("Mean Squared Error for TV and Sales:", mse_tv)
+
+# Linear regression and plotting for Radio and Sales
+X_radio = data[['Radio']].values
+y_radio = data['Sales'].values
+
+model_radio = LinearRegression()
+model_radio.fit(X_radio, y_radio)
+y_pred_radio = model_radio.predict(X_radio)
+
+plt.scatter(X_radio, y_radio, color='blue', label='Actual data')
+plt.plot(X_radio, y_pred_radio, color='red', label='Best Fit Line')
+plt.title('Radio vs Sales')
+plt.xlabel('Radio')
+plt.ylabel('Sales')
+plt.legend()
+plt.show()
+
+# Calculate error for Radio and Sales
+mse_radio = mean_squared_error(y_radio, y_pred_radio)
+print("Mean Squared Error for Radio and Sales:", mse_radio)
+
+# Linear regression and plotting for Newspaper and Sales
+X_newspaper = data[['Newspaper']].values
+y_newspaper = data['Sales'].values
+
+model_newspaper = LinearRegression()
+model_newspaper.fit(X_newspaper, y_newspaper)
+y_pred_newspaper = model_newspaper.predict(X_newspaper)
+
+plt.scatter(X_newspaper, y_newspaper, color='blue', label='Actual data')
+plt.plot(X_newspaper, y_pred_newspaper, color='red', label='Best Fit Line')
+plt.title('Newspaper vs Sales')
+plt.xlabel('Newspaper')
+plt.ylabel('Sales')
+plt.legend()
+plt.show()
+
+# Calculate error for Newspaper and Sales
+mse_newspaper = mean_squared_error(y_newspaper, y_pred_newspaper)
+print("Mean Squared Error for Newspaper and Sales:", mse_newspaper)

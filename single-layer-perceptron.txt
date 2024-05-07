@@ -1,0 +1,34 @@
+import numpy as np
+
+class Perceptron:
+    def __init__(self, num_inputs, learning_rate=0.1, epochs=100):
+        self.num_inputs = num_inputs
+        self.learning_rate = learning_rate
+        self.epochs = epochs
+        self.weights = np.zeros(num_inputs + 1)  # Additional weight for the bias term
+
+    def predict(self, inputs):
+        summation = np.dot(inputs, self.weights[1:]) + self.weights[0]  # Adding bias term
+        return 1 if summation > 0 else 0
+
+    def train(self, training_inputs, labels):
+        for _ in range(self.epochs):
+            for inputs, label in zip(training_inputs, labels):
+                prediction = self.predict(inputs)
+                self.weights[1:] += self.learning_rate * (label - prediction) * inputs
+                self.weights[0] += self.learning_rate * (label - prediction)  # Update bias term
+
+# Define the training data
+training_inputs = np.array([[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]])
+labels = np.array([0, 0, 0, 0, 0, 0, 0, 1])  # AND function output
+
+# Initialize and train the perceptron model
+perceptron = Perceptron(num_inputs=3)
+perceptron.train(training_inputs, labels)
+
+# Test the trained model
+test_inputs = np.array([[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]])
+print("Testing the trained model:")
+for inputs in test_inputs:
+    prediction = perceptron.predict(inputs)
+    print(f"Inputs: {inputs}, Prediction: {prediction}")

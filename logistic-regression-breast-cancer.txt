@@ -1,0 +1,103 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+
+# Load the breast cancer dataset
+data = load_breast_cancer()
+X, y = data.data, data.target
+
+# Add intercept term to X
+X = np.column_stack((np.ones(len(X)), X))
+
+# Define sigmoid function using logit transformation
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
+
+# Define logistic regression function
+def logistic_regression(X_train, y_train, X_test, y_test, alpha, iterations):
+    m, n = X_train.shape
+    theta = np.zeros(n)
+    training_accuracy = []
+    testing_accuracy = []
+
+    for i in range(iterations):
+        # Calculate hypothesis
+        z = np.dot(X_train, theta)
+        h = sigmoid(z)
+        
+        # Calculate gradients
+        gradient = np.dot(X_train.T, (h - y_train)) / m
+        
+        # Update parameters
+        theta -= alpha * gradient
+        
+        # Training accuracy
+        train_predictions = np.round(sigmoid(np.dot(X_train, theta)))
+        train_accuracy = np.mean(train_predictions == y_train)
+        training_accuracy.append(train_accuracy)
+
+        # Testing accuracy
+        test_predictions = np.round(sigmoid(np.dot(X_test, theta)))
+        test_accuracy = np.mean(test_predictions == y_test)
+        testing_accuracy.append(test_accuracy)
+
+    return theta, training_accuracy, testing_accuracy
+
+
+# Split the dataset into training and testing sets (70:30)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Initialize hyperparameters
+alpha = 0.01
+iterations = 1000
+
+# Train the logistic regression model
+theta, training_accuracy, testing_accuracy = logistic_regression(X_train, y_train, X_test, y_test, alpha, iterations)
+
+# Predictions
+predictions_train = np.round(sigmoid(np.dot(X_train, theta)))
+predictions_test = np.round(sigmoid(np.dot(X_test, theta)))
+
+# Confusion matrix
+def confusion_matrix(y_true, y_pred):
+    TP = np.sum((y_true == 1) & (y_pred == 1))
+    TN = np.sum((y_true == 0) & (y_pred == 0))
+    FP = np.sum((y_true == 0) & (y_pred == 1))
+    FN = np.sum((y_true == 1) & (y_pred == 0))
+    return TP, TN, FP, FN
+
+TP_train, TN_train, FP_train, FN_train = confusion_matrix(y_train, predictions_train)
+TP_test, TN_test, FP_test, FN_test = confusion_matrix(y_test, predictions_test)
+
+# Sensitivity and Specificity
+sensitivity_train = TP_train / (TP_train + FN_train)
+specificity_train = TN_train / (TN_train + FP_train)
+sensitivity_test = TP_test / (TP_test + FN_test)
+specificity_test = TN_test / (TN_test + FP_test)
+
+print("Confusion Matrix - Training:")
+print("True Positives:", TP_train)
+print("True Negatives:", TN_train)
+print("False Positives:", FP_train)
+print("False Negatives:", FN_train)
+print("Sensitivity (True Positive Rate):", sensitivity_train)
+print("Specificity (True Negative Rate):", specificity_train)
+
+print("\nConfusion Matrix - Testing:")
+print("True Positives:", TP_test)
+print("True Negatives:", TN_test)
+print("False Positives:", FP_test)
+print("False Negatives:", FN_test)
+print("Sensitivity (True Positive Rate):", sensitivity_test)
+print("Specificity (True Negative Rate):", specificity_test)
+
+# Plot training and testing accuracy vs iteration number
+plt.plot(range(iterations), training_accuracy, label='Training Accuracy')
+plt.plot(range(iterations), testing_accuracy, label='Testing Accuracy')
+plt.title('Training and Testing Accuracy vs Iteration Number')
+plt.xlabel('Iteration Number')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()
